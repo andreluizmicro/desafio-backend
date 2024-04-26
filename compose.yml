@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  app:
+    container_name: transfer-api
+    build:
+      context: ./
+      dockerfile: .setup/build/dev/Dockerfile
+    ports:
+      - "9000:9000"
+    networks:
+      - transfer-api-net
+    volumes:
+      - .:/app
+
+  mysql:
+    image: mysql:5.7
+    container_name: transfer-db
+    restart: always
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: transfer
+      MYSQL_PASSWORD: root
+      TZ: "America/Sao_Paulo"
+    volumes:
+      - .docker/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - transfer-api-net
+
+networks:
+  transfer-api-net:
+    driver: bridge
