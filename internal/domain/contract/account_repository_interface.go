@@ -7,5 +7,6 @@ import (
 type AccountRepositoryInterface interface {
 	Create(account *entity.Account) (*int64, error)
 	FIndById(id *int64) (*entity.Account, error)
+	UpdateUserBalance(account *entity.Account) error
 	ExistsById(id *int64) bool
 }

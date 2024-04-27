@@ -95,3 +95,13 @@ func (r *Repository) FIndById(id *int64) (*entity.Account, error) {
 
 	return entity.NewAccount(&accountModel.AccountID, user, accountModel.Balance)
 }
+
+func (r *Repository) UpdateUserBalance(account *entity.Account) error {
+	stmt, err := r.db.Prepare("UPDATE accounts SET balance = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(account.Balance(), *account.ID())
+	return err
+}

@@ -68,3 +68,7 @@ func (t *Transfer) Payer() *int64 {
 func (t *Transfer) Payee() *int64 {
 	return t.payee.ID()
 }
+
+func (t *Transfer) PayeeBalance() float64 {
+	return t.payee.Balance()
+}
