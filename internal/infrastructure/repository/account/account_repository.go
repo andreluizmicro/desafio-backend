@@ -71,7 +71,7 @@ func (r *Repository) FIndById(id *int64) (*entity.Account, error) {
 
 	var accountModel model.AccountModel
 
-	_ = stmt.QueryRow(*id).Scan(
+	_ = stmt.QueryRow(id).Scan(
 		&accountModel.AccountID,
 		&accountModel.Balance,
 		&accountModel.UserID,

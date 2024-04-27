@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/exception"
-	"github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 	"github.com/andreluizmicro/desafio-backend/internal/infrastructure/repository/user/model"
 )
 
@@ -24,9 +23,11 @@ func (r *Repository) Create(user *entity.User) (*int64, error) {
 		return nil, err
 	}
 
-	var cnpj *value_object.CNPJ
+	var cnpj *string
 	if user.CNPJ == nil {
 		cnpj = nil
+	} else {
+		cnpj = &user.CNPJ.Value
 	}
 
 	defer stmt.Close()

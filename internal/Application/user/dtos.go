@@ -6,7 +6,7 @@ type CreateUserInputDto struct {
 	CPF      string  `json:"cpf"`
 	CNPJ     *string `json:"cnpj"`
 	Password string  `json:"password"`
-	UserType int     `json:"user_type"`
+	UserType int     `json:"user_type_id"`
 }
 
 type CreateUserOutputDto struct {
