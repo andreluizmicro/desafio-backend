@@ -46,7 +46,6 @@ func (s *CreateTransferService) Execute(input CreateTransferInputDTO) (*CreateTr
 	if !s.isAuthorized() {
 		return nil, ErrUnauthorizedTransaction
 	}
-
 	transfer, err := entity.NewTransfer(nil, input.Value, payer, payee)
 	if err != nil {
 		return nil, err

@@ -8,6 +8,6 @@ type AccountModel struct {
 	UserPassword string  `json:"password"`
 	UserEmail    string  `json:"email"`
 	UserCPF      string  `json:"cpf"`
-	UserCNPJ     string  `json:"cnpj"`
+	UserCNPJ     *string `json:"cnpj"`
 	UserTypeID   int64   `json:"user_type"`
 }

@@ -17,7 +17,7 @@ func NewTransferRepository(db *sql.DB) *Repository {
 }
 
 func (r *Repository) Create(transfer *entity.Transfer) (*int64, error) {
-	stmt, err := r.db.Prepare("INSERT INTO transfers (payer_is, payee_id, value) VALUES (?, ?, ?)")
+	stmt, err := r.db.Prepare("INSERT INTO transfers (payer_id, payee_id, value) VALUES (?, ?, ?)")
 
 	if err != nil {
 		return new(int64), err

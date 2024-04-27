@@ -44,8 +44,5 @@ func (n *NotificationGateway) Notify() bool {
 		return false
 	}
 
-	if !response.Message {
-		return false
-	}
-	return true
+	return response.Message != false
 }

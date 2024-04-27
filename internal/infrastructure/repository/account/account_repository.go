@@ -83,21 +83,15 @@ func (r *Repository) FIndById(id *int64) (*entity.Account, error) {
 		&accountModel.UserCNPJ,
 	)
 
-	return modelToEntity(accountModel)
-}
-
-func modelToEntity(model model.AccountModel) (*entity.Account, error) {
 	user, err := entity.CreateUserFactory(
-		&model.UserID,
-		model.UserName,
-		model.UserEmail,
-		model.UserPassword,
-		model.UserCPF,
+		&accountModel.UserID,
+		accountModel.UserName,
+		accountModel.UserEmail,
+		accountModel.UserPassword,
+		accountModel.UserCPF,
 		nil,
-		int(model.UserTypeID),
+		int(accountModel.UserTypeID),
 	)
-	if err != nil {
-		return nil, err
-	}
-	return entity.NewAccount(&model.AccountID, user, model.Balance)
+
+	return entity.NewAccount(&accountModel.AccountID, user, accountModel.Balance)
 }
