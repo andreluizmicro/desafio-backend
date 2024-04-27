@@ -18,14 +18,14 @@ var (
 
 type Account struct {
 	id      value_object.ID
-	userId  value_object.ID
+	user    *User
 	balance float64
 }
 
-func newAccount(id, userId value_object.ID, balance float64) (*Account, error) {
+func newAccount(id value_object.ID, user *User, balance float64) (*Account, error) {
 	account := &Account{
 		id:      id,
-		userId:  userId,
+		user:    user,
 		balance: balance,
 	}
 
@@ -71,8 +71,8 @@ func (acc *Account) ID() value_object.ID {
 	return acc.id
 }
 
-func (acc *Account) UserId() value_object.ID {
-	return acc.userId
+func (acc *Account) User() *User {
+	return acc.user
 }
 
 func (acc *Account) Balance() float64 {
