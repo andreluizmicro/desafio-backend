@@ -3,6 +3,7 @@ package account
 import (
 	"github.com/andreluizmicro/desafio-backend/internal/domain/contract"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
+	"github.com/andreluizmicro/desafio-backend/internal/domain/exception"
 )
 
 type CreateAccountService struct {
@@ -21,6 +22,9 @@ func NewCreateAccountService(
 }
 
 func (s *CreateAccountService) Execute(input CreateAccountInputDto) (*CreateAccountOutputDto, error) {
+	if s.existsById(input.UserId) {
+		return nil, exception.ErrAccountAlreadyExists
+	}
 
 	user, err := s.userRepository.FindByID(&input.UserId)
 	if err != nil {
@@ -40,4 +44,8 @@ func (s *CreateAccountService) Execute(input CreateAccountInputDto) (*CreateAcco
 	return &CreateAccountOutputDto{
 		Id: *id,
 	}, nil
+}
+
+func (s *CreateAccountService) existsById(id int64) bool {
+	return s.accountRepository.ExistsById(&id)
 }
