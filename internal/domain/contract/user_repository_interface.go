@@ -7,4 +7,5 @@ import (
 
 type UserRepositoryInterface interface {
 	Create(user *entity.User) (*value_object.ID, error)
+	FindByID(id value_object.ID) (*entity.User, error)
 }

@@ -17,16 +17,20 @@ var (
 )
 
 type Account struct {
-	id      value_object.ID
+	id      *value_object.ID
 	user    *User
 	balance float64
 }
 
-func newAccount(id value_object.ID, user *User, balance float64) (*Account, error) {
+func NewAccount(id *value_object.ID, user *User, balance float64) (*Account, error) {
 	account := &Account{
 		id:      id,
 		user:    user,
 		balance: balance,
+	}
+
+	if id == nil {
+		account.id = value_object.NewID()
 	}
 
 	err := account.validate()
@@ -67,12 +71,16 @@ func (acc *Account) isInsufficientBalance() bool {
 	return acc.balance <= minBalance
 }
 
-func (acc *Account) ID() value_object.ID {
+func (acc *Account) ID() *value_object.ID {
 	return acc.id
 }
 
 func (acc *Account) User() *User {
 	return acc.user
+}
+
+func (acc *Account) UserID() string {
+	return acc.user.ID.Value
 }
 
 func (acc *Account) Balance() float64 {

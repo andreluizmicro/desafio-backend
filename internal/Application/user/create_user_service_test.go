@@ -3,14 +3,14 @@ package user
 import (
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
-	repositorymock "github.com/andreluizmicro/desafio-backend/test/mock/repository"
+	repositorymock "github.com/andreluizmicro/desafio-backend/test/mock/repository/user"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
-func TestCreateUser(t *testing.T) {
-	repositoryMock := &repositorymock.UserRepositoryMock{}
+func TestCreateUserService(t *testing.T) {
+	repositoryMock := &repositorymock.RepositoryMock{}
 	createUserService := NewCreateUserService(repositoryMock)
 
 	t.Run("test should create user", func(t *testing.T) {

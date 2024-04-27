@@ -2,8 +2,9 @@ package entity
 
 import (
 	"errors"
-	valueobject "github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 	"testing"
+
+	valueobject "github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 )
 
 func TestCreateTransfer(t *testing.T) {
@@ -17,8 +18,8 @@ func TestCreateTransfer(t *testing.T) {
 	t.Run("test should create new transfer without error", func(t *testing.T) {
 		PayerUser, _ := createUser("André Luiz", "andre@gmail.com", "207.275.320-14")
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := newAccount(*valueobject.NewID(), PayerUser, 100.0)
-		PayeeAccount, _ := newAccount(*valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 100.0)
+		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 100.0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: nil},
@@ -36,8 +37,8 @@ func TestCreateTransfer(t *testing.T) {
 		userTypeId := valueobject.NewUserType(2)
 		PayerUser.UserType = userTypeId
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := newAccount(*valueobject.NewID(), PayerUser, 100.0)
-		PayeeAccount, _ := newAccount(*valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 100.0)
+		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 100.0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: ErrInvalidPayer},
@@ -55,8 +56,8 @@ func TestCreateTransfer(t *testing.T) {
 		userTypeId := valueobject.NewUserType(1)
 		PayerUser.UserType = userTypeId
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := newAccount(*valueobject.NewID(), PayerUser, 10.0)
-		PayeeAccount, _ := newAccount(*valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 10.0)
+		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 100.0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: ErrInsufficientBalance},
@@ -74,8 +75,8 @@ func TestCreateTransfer(t *testing.T) {
 		userTypeId := valueobject.NewUserType(1)
 		PayerUser.UserType = userTypeId
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := newAccount(*valueobject.NewID(), PayerUser, 10.0)
-		PayeeAccount, _ := newAccount(*valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 10.0)
+		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: ErrCreditValue},

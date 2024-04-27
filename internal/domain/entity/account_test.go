@@ -2,8 +2,9 @@ package entity
 
 import (
 	"errors"
-	"github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 	"testing"
+
+	"github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 )
 
 type testcase struct {
@@ -31,7 +32,7 @@ func TestCreateNewAccount(t *testing.T) {
 			{ID: value_object.NewID(), User: user, Balance: &balance, ExpectedError: nil},
 		}
 		for _, item := range testCases {
-			account, err := newAccount(*item.ID, item.User, *item.Balance)
+			account, err := NewAccount(item.ID, item.User, *item.Balance)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}
@@ -49,7 +50,7 @@ func TestCreateNewAccount(t *testing.T) {
 			{ID: value_object.NewID(), User: user, Balance: &negativeBalance, ExpectedError: ErrCreditValue},
 		}
 		for _, item := range testCases {
-			account, err := newAccount(*item.ID, item.User, *item.Balance)
+			account, err := NewAccount(item.ID, item.User, *item.Balance)
 			err = account.CreditAccount(0)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
@@ -63,7 +64,7 @@ func TestCreateNewAccount(t *testing.T) {
 			{ID: value_object.NewID(), User: user, Balance: &balance, ExpectedError: ErrInsufficientBalance},
 		}
 		for _, item := range testCases {
-			account, err := newAccount(*item.ID, item.User, *item.Balance)
+			account, err := NewAccount(item.ID, item.User, *item.Balance)
 			err = account.DebitAccount(50)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
@@ -84,7 +85,7 @@ func TestCreateNewAccount(t *testing.T) {
 			},
 		}
 		for _, item := range testCases {
-			_, err := newAccount(*item.ID, item.User, *item.Balance)
+			_, err := NewAccount(item.ID, item.User, *item.Balance)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}
