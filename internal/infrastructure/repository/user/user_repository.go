@@ -2,7 +2,6 @@ package user
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/exception"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
@@ -65,8 +64,6 @@ func (r *Repository) FindByID(id value_object.ID) (*entity.User, error) {
 	if err != nil {
 		return nil, exception.ErrUserNotFound
 	}
-
-	fmt.Println("@!DSDADSADSADSAHDSAHDJSAHDJKSAHJKDASDJSAdhdjsahkdhsajkdhjksahdjka", userModel)
 	return modelToEntity(userModel)
 }
 

@@ -6,5 +6,5 @@ import (
 )
 
 type TransferRepositoryInterface interface {
-	Create(transfer entity.Transfer) (*valueobject.ID, error)
+	Create(transfer *entity.Transfer) (*valueobject.ID, error)
 }

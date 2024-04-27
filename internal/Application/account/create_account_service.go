@@ -1,7 +1,6 @@
 package account
 
 import (
-	"fmt"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/contract"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
 	valueobject "github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
@@ -27,8 +26,6 @@ func (s *CreateAccountService) Execute(input CreateAccountInputDto) (*CreateAcco
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("@!DSDADSADSADSAHDSAHDJSAHDJKSAHJKDASDJSA", user.ID)
 
 	account, err := entity.NewAccount(nil, user, 0)
 	if err != nil {
