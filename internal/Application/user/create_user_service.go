@@ -27,12 +27,12 @@ func (s *CreateUserService) Execute(input CreateUserInputDto) (*CreateUserOutput
 		return nil, err
 	}
 
-	_, err = s.userRepository.Create(user)
+	id, err := s.userRepository.Create(user)
 	if err != nil {
 		return nil, err
 	}
 
 	return &CreateUserOutputDto{
-		Id: user.ID.Value,
+		Id: id,
 	}, nil
 }

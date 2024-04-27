@@ -3,7 +3,6 @@ package account
 import (
 	"github.com/andreluizmicro/desafio-backend/internal/domain/contract"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
-	valueobject "github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 )
 
 type CreateAccountService struct {
@@ -22,7 +21,8 @@ func NewCreateAccountService(
 }
 
 func (s *CreateAccountService) Execute(input CreateAccountInputDto) (*CreateAccountOutputDto, error) {
-	user, err := s.userRepository.FindByID(valueobject.ID{Value: input.UserId})
+
+	user, err := s.userRepository.FindByID(&input.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -32,12 +32,12 @@ func (s *CreateAccountService) Execute(input CreateAccountInputDto) (*CreateAcco
 		return nil, err
 	}
 
-	_, err = s.accountRepository.Create(account)
+	id, err := s.accountRepository.Create(account)
 	if err != nil {
 		return nil, err
 	}
 
 	return &CreateAccountOutputDto{
-		Id: account.ID().Value,
+		Id: *id,
 	}, nil
 }

@@ -10,5 +10,5 @@ type CreateUserInputDto struct {
 }
 
 type CreateUserOutputDto struct {
-	Id string `json:"id"`
+	Id *int64 `json:"id"`
 }

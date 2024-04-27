@@ -18,7 +18,7 @@ var (
 )
 
 type User struct {
-	ID        *value_object.ID       `json:"id"`
+	ID        *int64                 `json:"id"`
 	Name      *value_object.Name     `json:"name"`
 	Email     *value_object.Email    `json:"email"`
 	Password  *value_object.Password `json:"-"`
@@ -31,7 +31,7 @@ type User struct {
 }
 
 func newUser(
-	id *value_object.ID,
+	id *int64,
 	name *value_object.Name,
 	email *value_object.Email,
 	password *value_object.Password,
@@ -55,11 +55,7 @@ func newUser(
 	return user, nil
 }
 
-func CreateUserFactory(id *string, name, email, password, cpf string, cnpj *string, userTypeId int) (*User, error) {
-	var userId *value_object.ID
-	if id == nil {
-		userId = value_object.NewID()
-	}
+func CreateUserFactory(id *int64, name, email, password, cpf string, cnpj *string, userTypeId int) (*User, error) {
 	userName, err := value_object.NewName(name)
 	if err != nil {
 		return nil, err
@@ -87,7 +83,7 @@ func CreateUserFactory(id *string, name, email, password, cpf string, cnpj *stri
 	userType := value_object.NewUserType(userTypeId)
 
 	return newUser(
-		userId,
+		id,
 		userName,
 		userEmail,
 		userPassword,

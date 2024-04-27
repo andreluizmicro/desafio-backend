@@ -9,6 +9,7 @@ import (
 func InitRoutes(
 	userController *controller.UserController,
 	accountController *controller.AccountController,
+	transferController *controller.TransferController,
 	port string,
 ) {
 	router := gin.Default()
@@ -20,6 +21,9 @@ func InitRoutes(
 
 		accounts := v1.Group("/accounts")
 		accounts.POST("/", accountController.Create)
+
+		transfers := v1.Group("/transfers")
+		transfers.POST("/", transferController.Create)
 	}
 
 	err := router.Run(fmt.Sprintf(":%s", port))

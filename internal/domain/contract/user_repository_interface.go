@@ -2,10 +2,9 @@ package contract
 
 import (
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
-	"github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 )
 
 type UserRepositoryInterface interface {
-	Create(user *entity.User) (*value_object.ID, error)
-	FindByID(id value_object.ID) (*entity.User, error)
+	Create(user *entity.User) (*int64, error)
+	FindByID(id *int64) (*entity.User, error)
 }

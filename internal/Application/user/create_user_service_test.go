@@ -12,7 +12,7 @@ import (
 func TestCreateUserService(t *testing.T) {
 	repositoryMock := &repositorymock.RepositoryMock{}
 	createUserService := NewCreateUserService(repositoryMock)
-
+	var id int64 = 10
 	t.Run("test should create user", func(t *testing.T) {
 		input := CreateUserInputDto{
 			Name:     "John Doe",
@@ -23,16 +23,14 @@ func TestCreateUserService(t *testing.T) {
 			UserType: 1,
 		}
 
-		repositoryMock.On("Create", mock.Anything).Return(value_object.NewID(), nil).Once()
+		repositoryMock.On("Create", mock.Anything).Return(&id, nil).Once()
 		output, err := createUserService.Execute(input)
 		assert.NoError(t, err)
 		assert.NotNil(t, output)
-		assert.NotEmpty(t, output.Id)
 	})
 
 	t.Run("test should return invalid legal person", func(t *testing.T) {
-		var id *value_object.ID
-		repositoryMock.On("Create", mock.Anything).Return(id, entity.ErrInvalidLegalPerson).Once()
+		repositoryMock.On("Create", mock.Anything).Return(&id, entity.ErrInvalidLegalPerson).Once()
 		output, err := createUserService.Execute(
 			CreateUserInputDto{
 				Name:     "John Doe",

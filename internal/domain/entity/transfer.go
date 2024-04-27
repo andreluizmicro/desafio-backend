@@ -1,12 +1,15 @@
 package entity
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
 	invalidPayer = 2
 )
 
 type Transfer struct {
+	id    *int64
 	value float64
 	payer *Account
 	payee *Account
@@ -16,8 +19,9 @@ var (
 	ErrInvalidPayer = errors.New("shopkeeper can't make a transfer")
 )
 
-func NewTransfer(value float64, payer, payee *Account) (*Transfer, error) {
+func NewTransfer(id *int64, value float64, payer, payee *Account) (*Transfer, error) {
 	transfer := &Transfer{
+		id:    id,
 		value: value,
 		payer: payer,
 		payee: payee,
@@ -51,4 +55,16 @@ func (t *Transfer) makeTransfer() error {
 		return err
 	}
 	return nil
+}
+
+func (t *Transfer) Value() float64 {
+	return t.value
+}
+
+func (t *Transfer) Payer() *int64 {
+	return t.payer.ID()
+}
+
+func (t *Transfer) Payee() *int64 {
+	return t.payee.ID()
 }

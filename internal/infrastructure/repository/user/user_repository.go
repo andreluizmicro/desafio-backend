@@ -18,8 +18,8 @@ func NewUserRepository(db *sql.DB) *Repository {
 	}
 }
 
-func (r *Repository) Create(user *entity.User) (*value_object.ID, error) {
-	stmt, err := r.db.Prepare("INSERT INTO users (id, name, email, cpf, cnpj, password, user_type_id) VALUES (?, ?, ?, ?, ?, ?, ?)")
+func (r *Repository) Create(user *entity.User) (*int64, error) {
+	stmt, err := r.db.Prepare("INSERT INTO users (name, email, cpf, cnpj, password, user_type_id) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return nil, err
 	}
@@ -30,8 +30,7 @@ func (r *Repository) Create(user *entity.User) (*value_object.ID, error) {
 	}
 
 	defer stmt.Close()
-	_, err = stmt.Exec(
-		user.ID.Value,
+	result, err := stmt.Exec(
 		user.Name.Value,
 		user.Email.Value,
 		user.CPF.Value,
@@ -42,17 +41,23 @@ func (r *Repository) Create(user *entity.User) (*value_object.ID, error) {
 	if err != nil {
 		return nil, err
 	}
-	return user.ID, nil
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	return &id, nil
 }
 
-func (r *Repository) FindByID(id value_object.ID) (*entity.User, error) {
+func (r *Repository) FindByID(id *int64) (*entity.User, error) {
 	var userModel model.UserModel
 	stmt, err := r.db.Prepare("SELECT id, name, email, password, cpf, cnpj, user_type_id password FROM users WHERE id = ? AND deleted = ?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	err = stmt.QueryRow(id.Value, 0).Scan(
+	err = stmt.QueryRow(*id, 0).Scan(
 		&userModel.ID,
 		&userModel.Name,
 		&userModel.Email,

@@ -15,17 +15,20 @@ func TestCreateTransfer(t *testing.T) {
 		ExpectedError error
 	}
 
+	var id int64 = 1
+
 	t.Run("test should create new transfer without error", func(t *testing.T) {
+
 		PayerUser, _ := createUser("André Luiz", "andre@gmail.com", "207.275.320-14")
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 100.0)
-		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(&id, PayerUser, 100.0)
+		PayeeAccount, _ := NewAccount(&id, PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 100.0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: nil},
 		}
 		for _, item := range testCases {
-			_, err := NewTransfer(item.Value, item.Payer, item.Payee)
+			_, err := NewTransfer(nil, item.Value, item.Payer, item.Payee)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}
@@ -37,14 +40,14 @@ func TestCreateTransfer(t *testing.T) {
 		userTypeId := valueobject.NewUserType(2)
 		PayerUser.UserType = userTypeId
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 100.0)
-		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(&id, PayerUser, 100.0)
+		PayeeAccount, _ := NewAccount(&id, PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 100.0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: ErrInvalidPayer},
 		}
 		for _, item := range testCases {
-			_, err := NewTransfer(item.Value, item.Payer, item.Payee)
+			_, err := NewTransfer(nil, item.Value, item.Payer, item.Payee)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}
@@ -56,14 +59,14 @@ func TestCreateTransfer(t *testing.T) {
 		userTypeId := valueobject.NewUserType(1)
 		PayerUser.UserType = userTypeId
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 10.0)
-		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(&id, PayerUser, 10.0)
+		PayeeAccount, _ := NewAccount(&id, PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 100.0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: ErrInsufficientBalance},
 		}
 		for _, item := range testCases {
-			_, err := NewTransfer(item.Value, item.Payer, item.Payee)
+			_, err := NewTransfer(nil, item.Value, item.Payer, item.Payee)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}
@@ -75,14 +78,14 @@ func TestCreateTransfer(t *testing.T) {
 		userTypeId := valueobject.NewUserType(1)
 		PayerUser.UserType = userTypeId
 		PayeeUser, _ := createUser("Marcos Silva", "marcos@gmail.com", "209.201.320-15")
-		PayerAccount, _ := NewAccount(valueobject.NewID(), PayerUser, 10.0)
-		PayeeAccount, _ := NewAccount(valueobject.NewID(), PayeeUser, 1000.0)
+		PayerAccount, _ := NewAccount(&id, PayerUser, 10.0)
+		PayeeAccount, _ := NewAccount(&id, PayeeUser, 1000.0)
 
 		testCases := []testcase{
 			{Value: 0, Payer: PayerAccount, Payee: PayeeAccount, ExpectedError: ErrCreditValue},
 		}
 		for _, item := range testCases {
-			_, err := NewTransfer(item.Value, item.Payer, item.Payee)
+			_, err := NewTransfer(nil, item.Value, item.Payer, item.Payee)
 			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}

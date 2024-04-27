@@ -2,10 +2,10 @@ package transfer
 
 type CreateTransferInputDTO struct {
 	Value float64 `json:"value"`
-	Payer string  `json:"payer"`
-	Payee string  `json:"payee"`
+	Payer int64   `json:"payer"`
+	Payee int64   `json:"payee"`
 }
 
 type CreateTransferOutputDTO struct {
-	ID string `json:"id"`
+	ID int64 `json:"id"`
 }

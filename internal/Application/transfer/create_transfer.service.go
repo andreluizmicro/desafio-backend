@@ -5,7 +5,6 @@ import (
 	"github.com/andreluizmicro/desafio-backend/internal/domain/contract"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/gateway"
-	valueobject "github.com/andreluizmicro/desafio-backend/internal/domain/value_object"
 )
 
 var (
@@ -35,11 +34,11 @@ func NewCreateTransferService(
 }
 
 func (s *CreateTransferService) Execute(input CreateTransferInputDTO) (*CreateTransferOutputDTO, error) {
-	payer, err := s.accountRepository.FIndById(valueobject.ID{Value: input.Payer})
+	payer, err := s.accountRepository.FIndById(&input.Payer)
 	if err != nil {
 		return nil, err
 	}
-	payee, err := s.accountRepository.FIndById(valueobject.ID{Value: input.Payee})
+	payee, err := s.accountRepository.FIndById(&input.Payee)
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +47,12 @@ func (s *CreateTransferService) Execute(input CreateTransferInputDTO) (*CreateTr
 		return nil, ErrUnauthorizedTransaction
 	}
 
-	transfer, err := entity.NewTransfer(input.Value, payer, payee)
+	transfer, err := entity.NewTransfer(nil, input.Value, payer, payee)
 	if err != nil {
 		return nil, err
 	}
 
-	transferId, err := s.transferRepository.Create(transfer)
+	id, err := s.transferRepository.Create(transfer)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +62,7 @@ func (s *CreateTransferService) Execute(input CreateTransferInputDTO) (*CreateTr
 	}
 
 	return &CreateTransferOutputDTO{
-		ID: transferId.Value,
+		ID: *id,
 	}, nil
 }
 

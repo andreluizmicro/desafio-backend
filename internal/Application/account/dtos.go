@@ -1,9 +1,9 @@
 package account
 
 type CreateAccountInputDto struct {
-	UserId string `json:"user_id"`
+	UserId int64 `json:"user_id"`
 }
 
 type CreateAccountOutputDto struct {
-	Id string `json:"id"`
+	Id int64 `json:"id"`
 }
