@@ -42,6 +42,7 @@ func main() {
 
 	createUserService := userService.NewCreateUserService(createUserRepository)
 	createAccountService := accountService.NewCreateAccountService(createAccountRepository, createUserRepository)
+	depositAccountService := accountService.NewDepositAccountService(createAccountRepository)
 
 	createTransferService := transfer.NewCreateTransferService(
 		createAccountRepository,
@@ -51,7 +52,7 @@ func main() {
 	)
 
 	userController := controller.NewUserController(createUserService)
-	accountController := controller.NewAccountController(createAccountService)
+	accountController := controller.NewAccountController(createAccountService, depositAccountService)
 	transferController := controller.NewTransferController(createTransferService)
 
 	http.InitRoutes(userController, accountController, transferController, cfg.WebServerPort)

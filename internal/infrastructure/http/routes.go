@@ -21,6 +21,7 @@ func InitRoutes(
 
 		accounts := v1.Group("/accounts")
 		accounts.POST("/", accountController.Create)
+		accounts.POST("/deposit/:user_id", accountController.Deposit)
 
 		transfers := v1.Group("/transfers")
 		transfers.POST("/", transferController.Create)

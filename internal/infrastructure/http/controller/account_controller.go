@@ -9,12 +9,17 @@ import (
 )
 
 type AccountController struct {
-	createAccountService *account.CreateAccountService
+	createAccountService  *account.CreateAccountService
+	depositAccountService *account.DepositAccountService
 }
 
-func NewAccountController(createAccountService *account.CreateAccountService) *AccountController {
+func NewAccountController(
+	createAccountService *account.CreateAccountService,
+	depositAccountService *account.DepositAccountService,
+) *AccountController {
 	return &AccountController{
-		createAccountService: createAccountService,
+		createAccountService:  createAccountService,
+		depositAccountService: depositAccountService,
 	}
 }
 
@@ -35,6 +40,23 @@ func (c *AccountController) Create(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+	ctx.JSON(http.StatusCreated, &output)
+}
 
+func (c *AccountController) Deposit(ctx *gin.Context) {
+	var input account.DepositAccountInputDto
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+		return
+	}
+	if err := ctx.ShouldBindUri(&input); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+		return
+	}
+	output, err := c.depositAccountService.Execute(input)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
 	ctx.JSON(http.StatusCreated, &output)
 }

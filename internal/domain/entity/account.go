@@ -10,7 +10,7 @@ const (
 
 var (
 	ErrInsufficientBalance              = errors.New("insufficient balance")
-	ErrCreditValue                      = errors.New("creditValue can't be zero")
+	ErrCreditValue                      = errors.New("credit value can't be zero")
 	ErrCreateAccountWithNegativeBalance = errors.New("it is not possible to create an account with a negative balance")
 )
 
@@ -43,7 +43,7 @@ func (acc *Account) validate() error {
 }
 
 func (acc *Account) CreditAccount(value float64) error {
-	if value == 0 {
+	if value <= 0 {
 		return ErrCreditValue
 	}
 	acc.balance += value

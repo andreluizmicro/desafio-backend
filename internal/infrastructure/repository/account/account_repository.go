@@ -3,6 +3,7 @@ package account
 import (
 	"database/sql"
 	"github.com/andreluizmicro/desafio-backend/internal/domain/entity"
+	"github.com/andreluizmicro/desafio-backend/internal/domain/exception"
 	"github.com/andreluizmicro/desafio-backend/internal/infrastructure/repository/account/model"
 )
 
@@ -71,7 +72,7 @@ func (r *Repository) FIndById(id *int64) (*entity.Account, error) {
 
 	var accountModel model.AccountModel
 
-	_ = stmt.QueryRow(id).Scan(
+	err = stmt.QueryRow(id).Scan(
 		&accountModel.AccountID,
 		&accountModel.Balance,
 		&accountModel.UserID,
@@ -83,15 +84,22 @@ func (r *Repository) FIndById(id *int64) (*entity.Account, error) {
 		&accountModel.UserCNPJ,
 	)
 
+	if accountModel.AccountID == 0 {
+		return nil, exception.ErrAccountNotFound
+	}
+
 	user, err := entity.CreateUserFactory(
 		&accountModel.UserID,
 		accountModel.UserName,
 		accountModel.UserEmail,
 		accountModel.UserPassword,
 		accountModel.UserCPF,
-		nil,
+		accountModel.UserCNPJ,
 		int(accountModel.UserTypeID),
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	return entity.NewAccount(&accountModel.AccountID, user, accountModel.Balance)
 }
