@@ -17,37 +17,60 @@ type CreateTransferService struct {
 	accountRepository    contract.AccountRepositoryInterface
 	transferRepository   contract.TransferRepositoryInterface
 	authorizationGateway gateway.AuthorizationGateway
-	NotificationGateway  gateway.NotificationGatewayInterface
+	notificationGateway  gateway.NotificationGatewayInterface
 }
 
 func NewCreateTransferService(
 	accountRepository contract.AccountRepositoryInterface,
 	transferRepository contract.TransferRepositoryInterface,
 	authorizationGateway gateway.AuthorizationGateway,
-	NotificationGateway gateway.NotificationGatewayInterface,
+	notificationGateway gateway.NotificationGatewayInterface,
 ) *CreateTransferService {
 	return &CreateTransferService{
 		accountRepository:    accountRepository,
 		transferRepository:   transferRepository,
 		authorizationGateway: authorizationGateway,
-		NotificationGateway:  NotificationGateway,
+		notificationGateway:  notificationGateway,
 	}
 }
 
 func (s *CreateTransferService) Execute(input CreateTransferInputDTO) (*CreateTransferOutputDTO, error) {
-	payer, err := s.accountRepository.FIndById(&input.Payer)
-	if err != nil {
-		return nil, err
-	}
-	payee, err := s.accountRepository.FIndById(&input.Payee)
+	accounts, err := s.getAccountsToTransaction(&input.Payer, &input.Payee)
 	if err != nil {
 		return nil, err
 	}
 
+	transferId, err := s.makeTransfer(input.Value, accounts["payer"], accounts["payee"])
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateTransferOutputDTO{
+		ID: *transferId,
+	}, nil
+}
+
+func (s *CreateTransferService) getAccountsToTransaction(payerId, payeeId *int64) (map[string]*entity.Account, error) {
+	payer, err := s.accountRepository.FIndById(payerId)
+	if err != nil {
+		return nil, err
+	}
+	payee, err := s.accountRepository.FIndById(payeeId)
+	if err != nil {
+		return nil, err
+	}
+	accounts := map[string]*entity.Account{
+		"payer": payer,
+		"payee": payee,
+	}
+	return accounts, nil
+}
+
+func (s *CreateTransferService) makeTransfer(value float64, payer *entity.Account, payee *entity.Account) (*int64, error) {
 	if !s.isAuthorized() {
 		return nil, ErrUnauthorizedTransaction
 	}
-	transfer, err := entity.NewTransfer(nil, input.Value, payer, payee)
+	transfer, err := entity.NewTransfer(nil, value, payer, payee)
 	if err != nil {
 		return nil, err
 	}
@@ -65,10 +88,7 @@ func (s *CreateTransferService) Execute(input CreateTransferInputDTO) (*CreateTr
 	if !s.notifyUsers() {
 		return nil, ErrNotifyTransaction
 	}
-
-	return &CreateTransferOutputDTO{
-		ID: *id,
-	}, nil
+	return id, nil
 }
 
 func (s *CreateTransferService) isAuthorized() bool {
@@ -76,7 +96,7 @@ func (s *CreateTransferService) isAuthorized() bool {
 }
 
 func (s *CreateTransferService) notifyUsers() bool {
-	return s.NotificationGateway.Notify()
+	return s.notificationGateway.Notify()
 }
 
 func (s *CreateTransferService) UpdateUsersBalance(payer *entity.Account, payee *entity.Account) error {

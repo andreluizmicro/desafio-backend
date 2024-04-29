@@ -12,34 +12,34 @@ type RepositoryFactory func(tx *sql.Tx) interface{}
 type UnitOfWorkInterface interface {
 	Register(name string, fc RepositoryFactory)
 	GetRepository(ctx context.Context, name string) (interface{}, error)
-	Do(ctx context.Context, fn func(ouw *UnitOfWorkInterface) error) error
+	Do(ctx context.Context, fn func(uow *Uow) error) error
 	CommitOrRollback() error
 	Rollback() error
 	UnRegister(name string)
 }
 
-type UnitOfWork struct {
+type Uow struct {
 	Db           *sql.DB
 	Tx           *sql.Tx
 	Repositories map[string]RepositoryFactory
 }
 
-func NewUnitOfWork(ctx context.Context, db *sql.DB) *UnitOfWork {
-	return &UnitOfWork{
+func NewUow(ctx context.Context, db *sql.DB) *Uow {
+	return &Uow{
 		Db:           db,
 		Repositories: make(map[string]RepositoryFactory),
 	}
 }
 
-func (u *UnitOfWork) Register(name string, fc RepositoryFactory) {
+func (u *Uow) Register(name string, fc RepositoryFactory) {
 	u.Repositories[name] = fc
 }
 
-func (u *UnitOfWork) UnRegister(name string) {
+func (u *Uow) UnRegister(name string) {
 	delete(u.Repositories, name)
 }
 
-func (u *UnitOfWork) GetRepository(ctx context.Context, name string) (interface{}, error) {
+func (u *Uow) GetRepository(ctx context.Context, name string) (interface{}, error) {
 	if u.Tx == nil {
 		tx, err := u.Db.BeginTx(ctx, nil)
 		if err != nil {
@@ -51,7 +51,7 @@ func (u *UnitOfWork) GetRepository(ctx context.Context, name string) (interface{
 	return repo, nil
 }
 
-func (u *UnitOfWork) Do(ctx context.Context, fn func(ouw *UnitOfWork) error) error {
+func (u *Uow) Do(ctx context.Context, fn func(Uow *Uow) error) error {
 	if u.Tx != nil {
 		return fmt.Errorf("transaction already started")
 	}
@@ -62,17 +62,17 @@ func (u *UnitOfWork) Do(ctx context.Context, fn func(ouw *UnitOfWork) error) err
 	u.Tx = tx
 	err = fn(u)
 	if err != nil {
-		errRollback := u.Rollback()
-		if errRollback != nil {
-			return errors.New(fmt.Sprintf("original error: %s, rollback error: %s", err.Error(), errRollback.Error()))
+		errRb := u.Rollback()
+		if errRb != nil {
+			return errors.New(fmt.Sprintf("original error: %s, rollback error: %s", err.Error(), errRb.Error()))
 		}
 		return err
 	}
-	return err
+	return u.CommitOrRollback()
 }
 
-func (u *UnitOfWork) Rollback() error {
-	if u.Tx != nil {
+func (u *Uow) Rollback() error {
+	if u.Tx == nil {
 		return errors.New("no transaction to rollback")
 	}
 	err := u.Tx.Rollback()
@@ -83,12 +83,12 @@ func (u *UnitOfWork) Rollback() error {
 	return nil
 }
 
-func (u *UnitOfWork) CommitOrRollback() error {
+func (u *Uow) CommitOrRollback() error {
 	err := u.Tx.Commit()
 	if err != nil {
-		errRollback := u.Rollback()
-		if errRollback != nil {
-			return errors.New(fmt.Sprintf("original error: %s, rollback error: %s", err.Error(), errRollback.Error()))
+		errRb := u.Rollback()
+		if errRb != nil {
+			return errors.New(fmt.Sprintf("original error: %s, rollback error: %s", err.Error(), errRb.Error()))
 		}
 		return err
 	}
